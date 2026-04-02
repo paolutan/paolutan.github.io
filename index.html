@@ -237,6 +237,7 @@
             .side-value { font-size: 1.4em; }
         }
     </style>
+<base target="_blank">
 </head>
 <body>
     <div class="header">
@@ -354,6 +355,21 @@
             };
         }
 
+        // 绘制圆角矩形的兼容性函数（支持不支持roundRect的旧浏览器）
+        function drawRoundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
         // 绘制边长标签的辅助函数
         function drawLabel(ctx, pos, text, color, isValid) {
             const padding = 6;
@@ -361,10 +377,9 @@
             const boxWidth = textWidth + padding * 2;
             const boxHeight = 24;
 
-            // 绘制背景圆角矩形
+            // 绘制背景圆角矩形（使用兼容性函数）
             ctx.fillStyle = isValid ? color : adjustColorOpacity(color, 0.3);
-            ctx.beginPath();
-            ctx.roundRect(pos.x - boxWidth/2, pos.y - boxHeight/2, boxWidth, boxHeight, 8);
+            drawRoundRect(ctx, pos.x - boxWidth/2, pos.y - boxHeight/2, boxWidth, boxHeight, 8);
             ctx.fill();
 
             // 绘制文字
